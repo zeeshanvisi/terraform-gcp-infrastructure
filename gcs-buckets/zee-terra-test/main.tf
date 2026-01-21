@@ -90,11 +90,8 @@ resource "google_storage_bucket" "application_logs" {
     managed-by  = "terraform"
   }
 
-  # Enable audit logging for security compliance
-  logging {
-    log_bucket        = var.audit_log_bucket
-    log_object_prefix = "access-logs/zee-terra-test/"
-  }
+  # Note: Audit logging removed to prevent dependency issues
+  # Configure access logging manually if needed after bucket creation
 }
 
 # 🚨 CRITICAL: NO IAM CONFIGURATION 🚨

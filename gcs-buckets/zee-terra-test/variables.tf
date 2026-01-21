@@ -39,9 +39,3 @@ variable "cost_center" {
   type        = string
   default     = "engineering"
 }
-
-variable "audit_log_bucket" {
-  description = "Bucket for storing access logs (optional)"
-  type        = string
-  default     = ""  # Can be configured later if needed
-}
