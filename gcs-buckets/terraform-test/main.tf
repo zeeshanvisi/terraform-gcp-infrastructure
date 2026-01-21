@@ -89,15 +89,3 @@ resource "google_storage_bucket" "terraform_test" {
     project-type = "development"
   }
 }
-
-# IAM policy for service accounts to write logs
-resource "google_storage_bucket_iam_member" "log_writer" {
-  bucket = google_storage_bucket.terraform_test.name
-  role   = "roles/storage.objectCreator"
-  
-  # Default compute service account can write logs
-  member = "serviceAccount:${data.google_compute_default_service_account.default.email}"
-}
-
-# Data source for default service account
-data "google_compute_default_service_account" "default" {}
