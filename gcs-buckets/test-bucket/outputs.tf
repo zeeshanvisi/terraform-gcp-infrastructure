@@ -1,5 +1,5 @@
 output "bucket_name" {
-  description = "Name of the created GCS bucket"
+  description = "Name of the created GCS bucket (with unique suffix)"
   value       = google_storage_bucket.test_bucket.name
 }
 
@@ -21,4 +21,9 @@ output "versioning_enabled" {
 output "bucket_location" {
   description = "Location of the GCS bucket"
   value       = google_storage_bucket.test_bucket.location
+}
+
+output "random_suffix" {
+  description = "Random suffix added to bucket name for global uniqueness"
+  value       = random_id.bucket_suffix.hex
 }

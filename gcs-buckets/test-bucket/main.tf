@@ -5,6 +5,10 @@ terraform {
       source  = "hashicorp/google"
       version = "~> 7.16"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.4"
+    }
   }
 }
 
@@ -13,9 +17,14 @@ provider "google" {
   region  = var.region
 }
 
+# Generate random suffix to ensure bucket name is globally unique
+resource "random_id" "bucket_suffix" {
+  byte_length = 4
+}
+
 # Simple GCS bucket with versioning enabled
 resource "google_storage_bucket" "test_bucket" {
-  name     = var.bucket_name
+  name     = "${var.bucket_name}-${random_id.bucket_suffix.hex}"
   location = var.location
   project  = var.project_id
 
