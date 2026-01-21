@@ -23,9 +23,9 @@ This Terraform configuration creates a production-grade Google Cloud Storage buc
   - `reports/` - For generated analytics reports
 
 ### 👥 Access Control
-- **Analytics Team Admin Access**: Full object management permissions
-- **Read-only Access**: For data scientists and business analysts
-- **Service Account Access**: For automated analytics workflows
+- **IAM-based access control** (configured separately)
+- **No default permissions** (secure by default)
+- **Post-deployment IAM setup** required (see commands below)
 
 ### 🏷️ Cost Management
 - Comprehensive labeling for cost tracking
@@ -35,10 +35,39 @@ This Terraform configuration creates a production-grade Google Cloud Storage buc
 ## Deployed Resources
 
 1. **google_storage_bucket.analytics_bucket** - Main analytics data bucket
-2. **google_storage_bucket_iam_binding.analytics_team_access** - Admin access for analytics team
-3. **google_storage_bucket_iam_binding.analytics_readers** - Read access for consumers
-4. **google_storage_bucket_object.*** - Folder structure placeholders
-5. **random_id.bucket_suffix** - Ensures unique bucket naming
+2. **google_storage_bucket_object.*** - Folder structure placeholders
+3. **random_id.bucket_suffix** - Ensures unique bucket naming
+
+## Post-Deployment IAM Setup
+
+After the bucket is created, configure IAM permissions using these commands:
+
+### Add Analytics Team Admin Access
+```bash
+# Replace with actual user/group email
+gcloud storage buckets add-iam-policy-binding gs://[BUCKET_NAME] \
+  --member='user:analytics-lead@visionet.com' \
+  --role='roles/storage.objectAdmin'
+
+# For a Google Group
+gcloud storage buckets add-iam-policy-binding gs://[BUCKET_NAME] \
+  --member='group:analytics-team@visionet.com' \
+  --role='roles/storage.objectAdmin'
+```
+
+### Add Read-Only Access for Data Scientists
+```bash
+gcloud storage buckets add-iam-policy-binding gs://[BUCKET_NAME] \
+  --member='group:data-scientists@visionet.com' \
+  --role='roles/storage.objectViewer'
+```
+
+### Add Service Account Access
+```bash
+gcloud storage buckets add-iam-policy-binding gs://[BUCKET_NAME] \
+  --member='serviceAccount:analytics-service@visionet-merck-poc.iam.gserviceaccount.com' \
+  --role='roles/storage.objectAdmin'
+```
 
 ## Usage
 
@@ -88,11 +117,6 @@ FROM FILES (
 - `noncurrent_version_delete_days`: 30 (delete old versions after 30 days)
 - `soft_delete_retention_seconds`: 604800 (7 days)
 
-### IAM Members (Update as needed)
-- **Analytics Team**: `group:analytics-team@visionet.com`
-- **Service Account**: `serviceAccount:analytics-service@visionet-merck-poc.iam.gserviceaccount.com`
-- **Read Access**: Data scientists and business analysts groups
-
 ## Monitoring
 
 ### Cloud Monitoring Metrics
@@ -127,7 +151,7 @@ FROM FILES (
 ## Troubleshooting
 
 ### Common Issues
-1. **Permission Denied**: Check IAM bindings in `variables.tf`
+1. **Permission Denied**: Configure IAM permissions using commands above
 2. **Bucket Already Exists**: Random suffix prevents conflicts
 3. **Lifecycle Not Working**: Verify object ages and conditions
 
@@ -141,4 +165,4 @@ FROM FILES (
 **Deployed via**: Terraform Cloud VCS Integration  
 **Repository**: `zeeshanvisi/terraform-gcp-infrastructure`  
 **Path**: `gcs-buckets/prod-analytics-data/`  
-**Last Updated**: 2026-01-21
+**Auto-Fixed**: 2026-01-21 (Removed problematic IAM group references)

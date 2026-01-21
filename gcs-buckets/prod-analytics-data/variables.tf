@@ -51,21 +51,3 @@ variable "soft_delete_retention_seconds" {
   type        = number
   default     = 604800
 }
-
-variable "analytics_team_members" {
-  description = "List of IAM members with admin access to the analytics bucket"
-  type        = list(string)
-  default = [
-    "group:analytics-team@visionet.com",
-    "serviceAccount:analytics-service@visionet-merck-poc.iam.gserviceaccount.com"
-  ]
-}
-
-variable "analytics_readers" {
-  description = "List of IAM members with read-only access to the analytics bucket"
-  type        = list(string)
-  default = [
-    "group:data-scientists@visionet.com",
-    "group:business-analysts@visionet.com"
-  ]
-}

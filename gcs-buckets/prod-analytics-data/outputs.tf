@@ -51,8 +51,7 @@ output "access_control" {
   value = {
     uniform_bucket_level_access = google_storage_bucket.analytics_bucket.uniform_bucket_level_access
     public_access_prevention = google_storage_bucket.analytics_bucket.public_access_prevention
-    analytics_team_role = "storage.objectAdmin"
-    readers_role = "storage.objectViewer"
+    iam_note = "IAM permissions can be configured post-deployment via GCP Console or gcloud CLI"
   }
 }
 
@@ -64,5 +63,14 @@ output "security_features" {
     public_access_blocked = true
     uniform_access_control = true
     force_destroy_protection = true
+  }
+}
+
+output "iam_commands" {
+  description = "Commands to configure IAM access post-deployment"
+  value = {
+    add_admin_user = "gcloud storage buckets add-iam-policy-binding gs://${google_storage_bucket.analytics_bucket.name} --member='user:your-email@domain.com' --role='roles/storage.objectAdmin'"
+    add_reader_user = "gcloud storage buckets add-iam-policy-binding gs://${google_storage_bucket.analytics_bucket.name} --member='user:your-email@domain.com' --role='roles/storage.objectViewer'"
+    add_service_account = "gcloud storage buckets add-iam-policy-binding gs://${google_storage_bucket.analytics_bucket.name} --member='serviceAccount:your-sa@project.iam.gserviceaccount.com' --role='roles/storage.objectAdmin'"
   }
 }

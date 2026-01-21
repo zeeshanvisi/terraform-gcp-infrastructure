@@ -89,20 +89,6 @@ resource "google_storage_bucket" "analytics_bucket" {
   }
 }
 
-# IAM binding for analytics team access
-resource "google_storage_bucket_iam_binding" "analytics_team_access" {
-  bucket = google_storage_bucket.analytics_bucket.name
-  role   = "roles/storage.objectAdmin"
-  members = var.analytics_team_members
-}
-
-# IAM binding for read-only access (for reporting tools)
-resource "google_storage_bucket_iam_binding" "analytics_readers" {
-  bucket = google_storage_bucket.analytics_bucket.name
-  role   = "roles/storage.objectViewer"
-  members = var.analytics_readers
-}
-
 # Create a sample folder structure for analytics data
 resource "google_storage_bucket_object" "raw_data_folder" {
   name   = "raw-data/.gitkeep"
