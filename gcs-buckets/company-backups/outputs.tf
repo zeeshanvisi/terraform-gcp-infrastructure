@@ -13,11 +13,6 @@ output "bucket_self_link" {
   value       = google_storage_bucket.company_backups.self_link
 }
 
-output "notification_topic" {
-  description = "Pub/Sub topic for bucket notifications"
-  value       = google_pubsub_topic.backup_notifications.name
-}
-
 output "bucket_location" {
   description = "Location of the GCS bucket"
   value       = google_storage_bucket.company_backups.location
@@ -43,7 +38,6 @@ output "usage_instructions" {
   ✅ 365-day lifecycle policy
   ✅ 7-day soft delete protection
   ✅ Public access prevention
-  ✅ Monitoring notifications
   
   📤 UPLOAD DATA:
   gsutil cp /path/to/backup gs://${google_storage_bucket.company_backups.name}/

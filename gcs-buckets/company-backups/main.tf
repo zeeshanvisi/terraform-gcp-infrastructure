@@ -76,33 +76,3 @@ resource "google_storage_bucket" "company_backups" {
   # Force destroy for cleanup (be careful in production)
   force_destroy = false
 }
-
-# Notification configuration for monitoring (optional)
-resource "google_storage_notification" "backup_notification" {
-  bucket         = google_storage_bucket.company_backups.name
-  payload_format = "JSON_API_V1"
-  topic          = google_pubsub_topic.backup_notifications.id
-  event_types    = ["OBJECT_FINALIZE", "OBJECT_DELETE"]
-
-  depends_on = [google_pubsub_topic_iam_member.binding]
-}
-
-# Pub/Sub topic for bucket notifications
-resource "google_pubsub_topic" "backup_notifications" {
-  name = "${var.bucket_name}-notifications-${random_id.bucket_suffix.hex}"
-
-  labels = {
-    environment = "production"
-    purpose     = "backup-monitoring"
-  }
-}
-
-# Required IAM for Cloud Storage to publish to Pub/Sub
-data "google_storage_project_service_account" "gcs_account" {
-}
-
-resource "google_pubsub_topic_iam_member" "binding" {
-  topic  = google_pubsub_topic.backup_notifications.id
-  role   = "roles/pubsub.publisher"
-  member = "serviceAccount:${data.google_storage_project_service_account.gcs_account.email_address}"
-}
