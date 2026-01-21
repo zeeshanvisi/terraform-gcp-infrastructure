@@ -3,7 +3,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "~> 6.0"
+      version = "~> 4.84"
     }
     random = {
       source  = "hashicorp/random"
@@ -33,9 +33,6 @@ resource "google_storage_bucket" "terraform_test" {
   versioning {
     enabled = true
   }
-
-  # Storage class optimized for logs (frequent access initially, then archive)
-  storage_class = "STANDARD"
 
   # Lifecycle management for cost optimization in dev
   lifecycle_rule {
@@ -70,8 +67,7 @@ resource "google_storage_bucket" "terraform_test" {
   # Clean up incomplete multipart uploads after 7 days
   lifecycle_rule {
     condition {
-      age                   = 7
-      matches_storage_class = ["STANDARD", "NEARLINE", "COLDLINE"]
+      age = 7
     }
     action {
       type = "AbortIncompleteMultipartUpload"
@@ -84,11 +80,6 @@ resource "google_storage_bucket" "terraform_test" {
   # Public access prevention
   public_access_prevention = "enforced"
 
-  # Soft delete policy (7 days retention)
-  soft_delete_policy {
-    retention_duration_seconds = 604800  # 7 days
-  }
-
   # Labels for cost tracking and organization
   labels = {
     environment = var.environment
@@ -98,31 +89,20 @@ resource "google_storage_bucket" "terraform_test" {
   }
 }
 
-# Get the default compute service account
-data "google_compute_default_service_account" "default" {
-  project = var.project_id
-}
-
-# IAM binding for development team access (using compute default service account)
-resource "google_storage_bucket_iam_binding" "bucket_admin" {
+# Simplified IAM - use project editor for development
+resource "google_storage_bucket_iam_member" "bucket_admin" {
   bucket = google_storage_bucket.terraform_test.name
   role   = "roles/storage.admin"
-  
-  members = [
-    "serviceAccount:${data.google_compute_default_service_account.default.email}",
-  ]
+  member = "projectEditor:${var.project_id}"
 
   depends_on = [google_storage_bucket.terraform_test]
 }
 
-# IAM binding for object creator (applications can write logs)
-resource "google_storage_bucket_iam_binding" "object_creator" {
+# IAM binding for object creator (applications can write logs) 
+resource "google_storage_bucket_iam_member" "object_creator" {
   bucket = google_storage_bucket.terraform_test.name
   role   = "roles/storage.objectCreator"
-  
-  members = [
-    "serviceAccount:${data.google_compute_default_service_account.default.email}",
-  ]
+  member = "projectEditor:${var.project_id}"
 
   depends_on = [google_storage_bucket.terraform_test]
 }

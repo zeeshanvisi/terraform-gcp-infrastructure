@@ -13,11 +13,11 @@ variable "region" {
 variable "bucket_name" {
   description = "Base name of the GCS bucket (random suffix will be added)"
   type        = string
-  default     = "visionet-terraform-test-logs"
+  default     = "visionet-test-logs"
   
   validation {
-    condition     = length(var.bucket_name) > 3 && length(var.bucket_name) < 55
-    error_message = "Bucket base name must be between 3 and 54 characters (allows room for random suffix)."
+    condition     = length(var.bucket_name) > 3 && length(var.bucket_name) < 50
+    error_message = "Bucket base name must be between 3 and 49 characters (allows room for random suffix)."
   }
 }
 
@@ -25,16 +25,4 @@ variable "environment" {
   description = "Environment tag"
   type        = string
   default     = "dev"
-}
-
-variable "retention_days" {
-  description = "Number of days to retain objects before deletion"
-  type        = number
-  default     = 365
-}
-
-variable "soft_delete_retention_days" {
-  description = "Number of days to retain soft-deleted objects"
-  type        = number
-  default     = 7
 }
