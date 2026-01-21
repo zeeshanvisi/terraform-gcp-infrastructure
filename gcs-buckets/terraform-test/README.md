@@ -1,5 +1,7 @@
 # Terraform Test - Development GCS Bucket
 
+**Last Updated: TIMESTAMP_PLACEHOLDER**
+
 This Terraform configuration creates a development GCS bucket for application logs with versioning and encryption.
 
 ## Resources Created
@@ -30,7 +32,7 @@ This Terraform configuration creates a development GCS bucket for application lo
 ## Configuration
 
 | Variable | Description | Default |
-|----------|-------------|---------||
+|----------|-------------|---------|
 | `project_id` | GCP project ID | `visionet-merck-poc` |
 | `region` | GCP region | `us-east5` |
 | `bucket_name` | Bucket name | `terraform-test` |
