@@ -13,7 +13,7 @@ variable "region" {
 variable "bucket_name" {
   description = "Name of the GCS bucket"
   type        = string
-  default     = "test-bucket"
+  default     = "visionet-test-bucket-20240121075456"
 }
 
 variable "location" {

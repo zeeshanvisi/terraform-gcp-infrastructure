@@ -5,10 +5,6 @@ terraform {
       source  = "hashicorp/google"
       version = "~> 7.16"
     }
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 3.4"
-    }
   }
 }
 
@@ -17,14 +13,9 @@ provider "google" {
   region  = var.region
 }
 
-# Generate random suffix to ensure bucket name is globally unique
-resource "random_id" "bucket_suffix" {
-  byte_length = 4
-}
-
 # Simple GCS bucket with versioning enabled
 resource "google_storage_bucket" "test_bucket" {
-  name     = "${var.bucket_name}-${random_id.bucket_suffix.hex}"
+  name     = var.bucket_name
   location = var.location
   project  = var.project_id
 
@@ -44,26 +35,6 @@ resource "google_storage_bucket" "test_bucket" {
 
   # Security: Prevent public access
   public_access_prevention = "enforced"
-
-  # Lifecycle rule to clean up old versions (optional, good practice)
-  lifecycle_rule {
-    condition {
-      num_newer_versions = 3
-    }
-    action {
-      type = "Delete"
-    }
-  }
-
-  # Cost optimization: Delete incomplete multipart uploads
-  lifecycle_rule {
-    condition {
-      age = 7
-    }
-    action {
-      type = "AbortIncompleteMultipartUpload"
-    }
-  }
 
   # Labels for cost tracking and organization
   labels = {
