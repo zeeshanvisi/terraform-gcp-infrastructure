@@ -13,7 +13,7 @@ variable "region" {
 variable "bucket_name" {
   description = "Name of the GCS bucket"
   type        = string
-  default     = "terraform-test"
+  default     = "visionet-terraform-test-logs-bucket"
   
   validation {
     condition     = length(var.bucket_name) > 3 && length(var.bucket_name) < 64
