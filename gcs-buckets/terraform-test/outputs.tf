@@ -27,3 +27,18 @@ output "public_access_prevention" {
   description = "Public access prevention setting"
   value       = google_storage_bucket.terraform_test.public_access_prevention
 }
+
+output "uniform_bucket_level_access" {
+  description = "Whether uniform bucket level access is enabled"
+  value       = google_storage_bucket.terraform_test.uniform_bucket_level_access
+}
+
+output "service_account_email" {
+  description = "Email of the service account with bucket access"
+  value       = data.google_compute_default_service_account.default.email
+}
+
+output "random_suffix" {
+  description = "Random suffix added to bucket name for uniqueness"
+  value       = random_id.bucket_suffix.hex
+}
